@@ -5,9 +5,7 @@ import (
 	"github.com/kapralovs/hackers-list/internal/hackers"
 )
 
-func RegisterHTTPEndpoints(router *fiber.App, uc hackers.Usecase) {
-	h := NewHandler(uc)
-
-	router.Get("/json/hackers", h.GetHackersList)
-	// h.GET("", h.Get)
+func (h *Handler) RegisterHTTPEndpoints(router *fiber.App, uc hackers.Usecase) {
+	handler := NewHandler(uc)
+	router.Get("/json/hackers", handler.GetHackersList)
 }

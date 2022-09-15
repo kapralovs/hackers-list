@@ -1,4 +1,4 @@
-package localcache
+package localstorage
 
 import (
 	"sync"
@@ -16,4 +16,8 @@ func NewLocalStorage() *LocalStorage {
 		hackers: make(map[string]*models.Hacker),
 		mutex:   new(sync.Mutex),
 	}
+}
+
+func (ls *LocalStorage) GetHackersList() {
+
 }

@@ -5,21 +5,16 @@ import (
 	"github.com/kapralovs/hackers-list/internal/hackers"
 )
 
-type Hacker struct {
-	Name  string
-	Score int
-}
-
 type Handler struct {
 	usecase hackers.Usecase
 }
 
-func NewHandler(usecase hackers.Usecase) *Handler {
+func NewHandler(uc hackers.Usecase) *Handler {
 	return &Handler{
-		usecase: usecase,
+		usecase: uc,
 	}
 }
 
 func (h *Handler) GetHackersList(c *fiber.Ctx) error {
-	return c.SendString("hello")
+	return c.SendString("Hello")
 }

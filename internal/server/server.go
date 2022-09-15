@@ -1,53 +1,29 @@
 package server
 
 import (
-	"context"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"time"
+	repo "github.com/kapralovs/hackers-list/internal/hackers/repository/localstorage"
+	"github.com/kapralovs/hackers-list/internal/hackers/usecase"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/kapralovs/hackers-list/internal/hackers"
-	hkhttp "github.com/kapralovs/hackers-list/internal/hackers/delivery"
+	"github.com/kapralovs/hackers-list/internal/hackers/delivery"
 )
 
-type App struct {
-	httpServer     *http.Server
-	hackersUsecase hackers.Usecase
+type server struct {
+	port   string
+	router *fiber.App
 }
 
-func NewApp() *App {
-	// db := initDB()
-	// hackerRepo := redis.NewRedisRepository
-	return &App{}
-}
-
-func (a *App) Run(port string) error {
-	router := fiber.New()
-	hkhttp.RegisterHTTPEndpoints(router, a.hackersUsecase)
-	a.httpServer = &http.Server{
-		Addr:           ":" + port,
-		Handler:        router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+func New(port string, router *fiber.App) *server {
+	return &server{
+		port:   port,
+		router: router,
 	}
+}
 
-	go func() {
-		if err := a.httpServer.ListenAndServe(); err != nil {
-			log.Fatalf("Failed to listen and serve: %+v", err)
-		}
-	}()
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt, os.Interrupt)
-
-	<-quit
-
-	ctx, shutdown := context.WithTimeout(context.Background(), 5*time.Second)
-	defer shutdown()
-
-	return a.httpServer.Shutdown(ctx)
+func (s *server) Run() error {
+	repo := repo.NewLocalStorage()
+	uc := usecase.New(repo)
+	handler := delivery.NewHandler(uc)
+	handler.RegisterHTTPEndpoints(s.router, uc)
+	return s.router.Listen(s.port)
 }
