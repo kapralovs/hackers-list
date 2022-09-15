@@ -18,6 +18,7 @@ func NewLocalStorage() *LocalStorage {
 	}
 }
 
-func (ls *LocalStorage) GetHackersList() {
-
+func (ls *LocalStorage) GetHackersList() ([]*models.Hacker, error) {
+	hackers := []*models.Hacker{}
+	return hackers, nil
 }
