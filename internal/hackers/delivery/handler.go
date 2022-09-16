@@ -19,7 +19,10 @@ func NewHandler(uc hackers.Usecase) *Handler {
 }
 
 func (h *Handler) GetHackersList(c *fiber.Ctx) error {
-	hackers := h.usecase.GetHackersList()
+	hackers, err := h.usecase.GetHackersList()
+	if err != nil {
+		log.Fatal(err)
+	}
 	json, err := json.Marshal(hackers)
 	if err != nil {
 		log.Fatal(err)

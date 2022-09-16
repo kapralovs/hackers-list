@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"log"
 
 	"github.com/go-redis/redis/v9"
 	"github.com/kapralovs/hackers-list/internal/models"
@@ -18,11 +17,11 @@ func NewRedisStorage(client *redis.Client) *RedisStorage {
 	}
 }
 
-func (rs *RedisStorage) GetHackersList() []*models.Hacker {
+func (rs *RedisStorage) GetHackersList() ([]*models.Hacker, error) {
 	hackers := []*models.Hacker{}
 	result, err := rs.redisClient.ZRangeWithScores(context.Background(), "hackers", 0, -1).Result()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	for _, v := range result {
 		hacker := &models.Hacker{}
@@ -30,5 +29,5 @@ func (rs *RedisStorage) GetHackersList() []*models.Hacker {
 		hacker.Name = v.Member.(string)
 		hackers = append(hackers, hacker)
 	}
-	return hackers
+	return hackers, nil
 }

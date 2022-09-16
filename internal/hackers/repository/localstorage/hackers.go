@@ -11,14 +11,14 @@ type LocalStorage struct {
 	mutex   *sync.Mutex
 }
 
-// func NewLocalStorage() *LocalStorage {
-// 	return &LocalStorage{
-// 		hackers: make(map[string]*models.Hacker),
-// 		mutex:   new(sync.Mutex),
-// 	}
-// }
+func NewLocalStorage() *LocalStorage {
+	return &LocalStorage{
+		hackers: make(map[string]*models.Hacker),
+		mutex:   new(sync.Mutex),
+	}
+}
 
-// func (ls *LocalStorage) GetHackersList() ([]*models.Hacker, error) {
-// 	hackers := []*models.Hacker{}
-// 	return hackers, nil
-// }
+func (ls *LocalStorage) GetHackersList() ([]*models.Hacker, error) {
+	hackers := []*models.Hacker{}
+	return hackers, nil
+}
