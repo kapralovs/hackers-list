@@ -1,26 +1,34 @@
 package redis
 
 import (
+	"context"
+	"log"
+
 	"github.com/go-redis/redis/v9"
 	"github.com/kapralovs/hackers-list/internal/models"
 )
 
-type config struct {
-	client *redis.Client
+type RedisStorage struct {
+	redisClient *redis.Client
 }
 
-func NewConfig(client *redis.Client) *config {
-	return &config{
-		client: redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
-			Password: "", // no password set
-			DB:       0,  // use default DB
-		}),
+func NewRedisStorage(client *redis.Client) *RedisStorage {
+	return &RedisStorage{
+		redisClient: client,
 	}
 }
 
-func GetHackersList(rc *redis.Client) ([]*models.Hacker, error) {
+func (rs *RedisStorage) GetHackersList() []*models.Hacker {
 	hackers := []*models.Hacker{}
-	// rc.ZRange(context.Background(),"hackers")
-	return hackers, nil
+	result, err := rs.redisClient.ZRangeWithScores(context.Background(), "hackers", 0, -1).Result()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, v := range result {
+		hacker := &models.Hacker{}
+		hacker.Score = v.Score
+		hacker.Name = v.Member.(string)
+		hackers = append(hackers, hacker)
+	}
+	return hackers
 }

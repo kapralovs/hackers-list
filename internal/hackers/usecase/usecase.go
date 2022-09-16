@@ -15,10 +15,15 @@ func New(r hackers.Repository) *Usecase {
 	}
 }
 
-func (uc *Usecase) GetHackersList() ([]*models.Hacker, error) {
-	hackers, err := uc.repo.GetHackersList()
-	if err != nil {
+// func (uc *Usecase) GetHackersList() ([]*models.Hacker, error) {
+// 	hackers, err := uc.repo.GetHackersList()
+// 	if err != nil {
 
-	}
-	return hackers, nil
+// 	}
+// 	return hackers, nil
+// }
+
+func (uc *Usecase) GetHackersList() []*models.Hacker {
+	hackers := uc.repo.GetHackersList()
+	return hackers
 }

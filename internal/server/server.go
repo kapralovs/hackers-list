@@ -1,7 +1,8 @@
 package server
 
 import (
-	repo "github.com/kapralovs/hackers-list/internal/hackers/repository/localstorage"
+	"github.com/go-redis/redis/v9"
+	repo "github.com/kapralovs/hackers-list/internal/hackers/repository/redis"
 	"github.com/kapralovs/hackers-list/internal/hackers/usecase"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,8 +22,13 @@ func New(port string, router *fiber.App) *server {
 }
 
 func (s *server) Run() error {
-	repo := repo.NewLocalStorage()
-	uc := usecase.New(repo)
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	redisRepo := repo.NewRedisStorage(redisClient)
+	uc := usecase.New(redisRepo)
 	handler := delivery.NewHandler(uc)
 	handler.RegisterHTTPEndpoints(s.router, uc)
 	return s.router.Listen(s.port)
