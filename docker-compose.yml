@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  hackers-list:
+    build: .
+    ports:
+      - "8010:8010"
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
